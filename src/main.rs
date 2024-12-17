@@ -1,9 +1,18 @@
-use actix_web::{self, App, HttpServer};
-use controller::{echo, hello};
+use actix_web::{self, get, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
 use sea_orm::*;
 use std::env;
 use tracing::*;
+
+#[get("/")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
+}
+
+#[post("/echo")]
+async fn echo(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -16,14 +25,14 @@ async fn main() -> std::io::Result<()> {
         .with_test_writer()
         .init();
 
-    // let mut opt = ConnectOptions::new(env::var("DATABASE_URL").expect("DATABASE_URL not found"));
+    let mut opt = ConnectOptions::new(env::var("DATABASE_URL").expect("DATABASE_URL is not set"));
 
-    // // sqlxのlog出力を設定
-    // opt.sqlx_logging(true)
-    //     .sqlx_logging_level(log::LevelFilter::Debug);
-    // let db = Database::connect(opt)
-    //     .await
-    //     .expect("Fail to Connect Database");
+    // sqlxのlog出力を設定
+    opt.sqlx_logging(true)
+        .sqlx_logging_level(log::LevelFilter::Debug);
+    let db = Database::connect(opt)
+        .await
+        .expect("Fail to Connect Database");
 
     println!("Playground: http://localhost:8000");
 

@@ -1,0 +1,8 @@
+[package]
+name = "domain"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# domain-model以外の層に依存してはいけない
+domain-model = { path = "../domain-model" }
