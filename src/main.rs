@@ -1,18 +1,9 @@
-use actix_web::{self, get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{self, App, HttpServer};
 use dotenv::dotenv;
+use interface::{echo, hello};
 use sea_orm::*;
 use std::env;
 use tracing::*;
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

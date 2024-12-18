@@ -15,6 +15,7 @@ tracing = ">=0.1.40"
 tracing-subscriber = ">=0.3.18"
 tokio = ">=1.39.2"
 dotenv = ">=0.15.0"
+interface = { path = "crates/interface" }
 
 [workspace]
 members = [

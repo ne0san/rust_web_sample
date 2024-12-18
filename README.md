@@ -30,7 +30,7 @@ sea-orm-cli migrate init
 
 ## インタフェース層
 
-`main`
+`crates/interface`
 
 ルーティングとか UI とかを配置
 
@@ -50,7 +50,9 @@ sea-orm-cli migrate init
 
 `crates/application`
 
-ドメイン
+インターフェースとドメインとインフラのつなぎをする中間層
+インフラとのつなぎがわからん
+リポジトリはここに書いて、永続化の具体的処理部分はインフラ層に書くということ?
 
 ## ドメイン層
 

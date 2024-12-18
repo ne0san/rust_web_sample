@@ -1599,6 +1599,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "interface"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+]
+
+[[package]]
 name = "is_terminal_polyfill"
 version = "1.70.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2385,6 +2392,7 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "dotenv",
+ "interface",
  "sea-orm",
  "tokio",
  "tracing",
