@@ -5,10 +5,10 @@ use domain_model::{
 };
 use std::sync::Arc;
 
-pub struct RegisterUserNameService {
+pub struct Service {
     register_user_name_repository: Arc<dyn RegisterUserNameRepository>,
 }
-impl RegisterUserNameService {
+impl Service {
     pub fn new(register_user_name_repository: Arc<dyn RegisterUserNameRepository>) -> Self {
         Self {
             register_user_name_repository,
@@ -69,7 +69,7 @@ mod tests {
                 .with(eq(UserName::new("word").unwrap()))
                 .returning(|_| Ok(()));
 
-            let service = RegisterUserNameService::new(Arc::new(register_user_name_repository));
+            let service = Service::new(Arc::new(register_user_name_repository));
 
             let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
 
@@ -86,7 +86,7 @@ mod tests {
                 .expect_create_user_name()
                 .times(0);
 
-            let service = RegisterUserNameService::new(Arc::new(register_user_name_repository));
+            let service = Service::new(Arc::new(register_user_name_repository));
 
             let result =
                 service.register_user_name(UnvalidatedUserName("veryverylongusern".to_string()));
@@ -109,7 +109,7 @@ mod tests {
                 .expect_create_user_name()
                 .times(0);
 
-            let service = RegisterUserNameService::new(Arc::new(register_user_name_repository));
+            let service = Service::new(Arc::new(register_user_name_repository));
 
             let result = service.register_user_name(UnvalidatedUserName("sh".to_string()));
 
@@ -137,7 +137,7 @@ mod tests {
                 .with(eq(UserName::new("word").unwrap()))
                 .returning(|_| Ok(()));
 
-            let service = RegisterUserNameService::new(Arc::new(register_user_name_repository));
+            let service = Service::new(Arc::new(register_user_name_repository));
 
             let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
 
@@ -165,7 +165,7 @@ mod tests {
                 .with(eq(UserName::new("word").unwrap()))
                 .returning(|_| Err(ServiceError("Already exists".to_string())));
 
-            let service = RegisterUserNameService::new(Arc::new(register_user_name_repository));
+            let service = Service::new(Arc::new(register_user_name_repository));
 
             let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
 
@@ -191,7 +191,7 @@ mod tests {
                 .expect_create_user_name()
                 .times(0);
 
-            let service = RegisterUserNameService::new(Arc::new(register_user_name_repository));
+            let service = Service::new(Arc::new(register_user_name_repository));
 
             let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
 
