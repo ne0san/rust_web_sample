@@ -1,6 +1,6 @@
 use crate::repository::{CheckUserNameNgWordRepository, CreateUserNameRepository};
 use domain_model::{
-    err::RegisterUserNameError,
+    err::{RegisterUserNameError, ValidationError},
     model::{UnvalidatedUserName, UserName},
 };
 use std::sync::Arc;
@@ -24,7 +24,28 @@ impl RegisterUserNameService {
         &self,
         user_name: UnvalidatedUserName,
     ) -> Result<(), RegisterUserNameError> {
-        todo!()
+        let user_name = UserName::new(&user_name.0)?;
+
+        if self
+            .check_user_name_ng_word_repository
+            .find_ng_word(&user_name)?
+        {
+            return Err(RegisterUserNameError::from(ValidationError(
+                "Name must not contain NG words".to_string(),
+            )));
+        }
+
+        if self
+            .create_user_name_repository
+            .create_user_name(&user_name)
+            .is_err()
+        {
+            return Err(RegisterUserNameError::from(ValidationError(
+                "Failed to register user name".to_string(),
+            )));
+        }
+
+        Ok(())
     }
 }
 
