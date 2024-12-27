@@ -1,4 +1,4 @@
-use domain_service::register_user_name::service::DomainService as RegisterUserNameDomainService;
+use domain_service::register_user_name::DomainService as RegisterUserNameDomainService;
 use std::sync::Arc;
 
 pub struct AppService {
