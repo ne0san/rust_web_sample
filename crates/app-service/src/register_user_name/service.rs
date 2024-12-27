@@ -26,9 +26,10 @@ impl AppServiceImpl {
 impl AppService for AppServiceImpl {
     fn register_user_name(&self, user_name: UserNameDto) -> Result<(), String> {
         // todo サービスエラーかバリデーションエラーかで分岐する
-        self.register_user_name_domain_service
-            .register_user_name(UnvalidatedUserName(user_name.0))
-            .map_err(|err| err.to_string())
+        // self.register_user_name_domain_service
+        //     .register_user_name(UnvalidatedUserName(user_name.0))
+        //     .map_err(|err| err.to_string());
+        todo!();
     }
 }
 

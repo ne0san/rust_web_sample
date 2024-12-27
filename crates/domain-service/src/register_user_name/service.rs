@@ -190,14 +190,18 @@ mod tests {
         }
 
         #[test]
-        fn test_register_user_name_check_ng_word_error() {
+        fn test_register_user_name_check_ng_word_service_error() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository
                 .expect_find_ng_word()
                 .times(1)
                 .with(eq(UserName::new("word").unwrap()))
-                .returning(|_| Err(ServiceError("DomainServiceImpl error".to_string())));
+                .returning(|_| {
+                    Err(RegisterUserNameError::from(ServiceError(
+                        "DomainServiceImpl error".to_string(),
+                    )))
+                });
 
             register_user_name_repository
                 .expect_create_user_name()
@@ -211,6 +215,35 @@ mod tests {
                 result,
                 Err(RegisterUserNameError::from(ServiceError(
                     "DomainServiceImpl error".to_string(),
+                )))
+            );
+        }
+        #[test]
+        fn test_register_user_name_check_ng_word_validation_error() {
+            let mut register_user_name_repository = MockRegisterUserNameRepository::new();
+
+            register_user_name_repository
+                .expect_find_ng_word()
+                .times(1)
+                .with(eq(UserName::new("word").unwrap()))
+                .returning(|_| {
+                    Err(RegisterUserNameError::from(ValidationError(
+                        "Contains NG Word".to_string(),
+                    )))
+                });
+
+            register_user_name_repository
+                .expect_create_user_name()
+                .times(0);
+
+            let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
+
+            let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
+
+            assert_eq!(
+                result,
+                Err(RegisterUserNameError::from(ValidationError(
+                    "Contains NG Word".to_string(),
                 )))
             );
         }
