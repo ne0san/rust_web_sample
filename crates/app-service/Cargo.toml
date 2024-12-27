@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 domain-service = { path = "../domain-service" }
+domain-model = { path = "../domain-model" }
+
+[dev-dependencies]
+mockall = "0.13.1"
