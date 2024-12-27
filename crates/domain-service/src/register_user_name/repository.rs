@@ -1,4 +1,4 @@
-use domain_model::{err::ServiceError, model::UserName};
+use domain_model::register_user_name::{err::ServiceError, model::UserName};
 
 #[cfg(test)]
 use mockall::automock;

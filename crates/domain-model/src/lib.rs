@@ -1,3 +1,1 @@
-mod constants;
-pub mod err;
-pub mod model;
+pub mod register_user_name;
