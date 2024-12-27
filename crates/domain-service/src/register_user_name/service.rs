@@ -5,6 +5,10 @@ use domain_model::register_user_name::{
 };
 use std::sync::Arc;
 
+#[cfg(test)]
+use mockall::automock;
+
+#[cfg_attr(test, automock)]
 pub trait DomainService {
     fn register_user_name(
         &self,
