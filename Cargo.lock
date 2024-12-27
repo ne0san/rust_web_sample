@@ -337,6 +337,8 @@ dependencies = [
  "domain-model",
  "domain-service",
  "mockall",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 domain-service = { path = "../domain-service" }
 domain-model = { path = "../domain-model" }
+tracing = ">=0.1.40"
+tracing-subscriber = ">=0.3.18"
 
 [dev-dependencies]
 mockall = "0.13.1"
