@@ -1,12 +1,14 @@
 use super::repository::RegisterUserNameRepository;
+use async_trait::async_trait;
 use domain_model::register_user_name::{
     err::{RegisterUserNameError, ValidationError},
     model::{UnvalidatedUserName, UserName},
 };
 use std::sync::Arc;
 
-pub trait DomainService {
-    fn register_user_name(
+#[async_trait]
+pub trait DomainService: Send + Sync {
+    async fn register_user_name(
         &self,
         user_name: UnvalidatedUserName,
     ) -> Result<(), RegisterUserNameError>;
@@ -22,8 +24,9 @@ impl DomainServiceImpl {
         }
     }
 }
+#[async_trait]
 impl DomainService for DomainServiceImpl {
-    fn register_user_name(
+    async fn register_user_name(
         &self,
         user_name: UnvalidatedUserName,
     ) -> Result<(), RegisterUserNameError> {
@@ -31,7 +34,8 @@ impl DomainService for DomainServiceImpl {
 
         if self
             .register_user_name_repository
-            .find_ng_word(&user_name)?
+            .find_ng_word(&user_name)
+            .await?
         {
             return Err(RegisterUserNameError::from(ValidationError(
                 "Name must not contain NG words".to_string(),
@@ -40,7 +44,8 @@ impl DomainService for DomainServiceImpl {
 
         let register_result = self
             .register_user_name_repository
-            .create_user_name(&user_name);
+            .create_user_name(&user_name)
+            .await;
 
         if let Err(err) = register_result {
             return Err(RegisterUserNameError::from(err));
@@ -61,8 +66,8 @@ mod tests {
         use super::*;
         use crate::register_user_name::repository::MockRegisterUserNameRepository;
 
-        #[test]
-        fn test_register_user_name() {
+        #[tokio::test]
+        async fn test_register_user_name() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository
@@ -79,13 +84,15 @@ mod tests {
 
             let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
 
-            let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
+            let result = service
+                .register_user_name(UnvalidatedUserName("word".to_string()))
+                .await;
 
             assert_eq!(result, Ok(()));
         }
 
-        #[test]
-        fn test_register_user_name_too_long() {
+        #[tokio::test]
+        async fn test_register_user_name_too_long() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository.expect_find_ng_word().times(0);
@@ -96,8 +103,9 @@ mod tests {
 
             let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
 
-            let result =
-                service.register_user_name(UnvalidatedUserName("veryverylongusern".to_string()));
+            let result = service
+                .register_user_name(UnvalidatedUserName("veryverylongusern".to_string()))
+                .await;
 
             assert_eq!(
                 result,
@@ -107,8 +115,8 @@ mod tests {
             );
         }
 
-        #[test]
-        fn test_register_user_name_too_short() {
+        #[tokio::test]
+        async fn test_register_user_name_too_short() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository.expect_find_ng_word().times(0);
@@ -119,7 +127,9 @@ mod tests {
 
             let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
 
-            let result = service.register_user_name(UnvalidatedUserName("sh".to_string()));
+            let result = service
+                .register_user_name(UnvalidatedUserName("sh".to_string()))
+                .await;
 
             assert_eq!(
                 result,
@@ -129,8 +139,8 @@ mod tests {
             );
         }
 
-        #[test]
-        fn test_register_user_name_ng_word() {
+        #[tokio::test]
+        async fn test_register_user_name_ng_word() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository
@@ -147,7 +157,9 @@ mod tests {
 
             let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
 
-            let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
+            let result = service
+                .register_user_name(UnvalidatedUserName("word".to_string()))
+                .await;
 
             assert_eq!(
                 result,
@@ -157,8 +169,8 @@ mod tests {
             );
         }
 
-        #[test]
-        fn test_register_user_name_too_register_user_name_error() {
+        #[tokio::test]
+        async fn test_register_user_name_too_register_user_name_error() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository
@@ -175,7 +187,9 @@ mod tests {
 
             let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
 
-            let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
+            let result = service
+                .register_user_name(UnvalidatedUserName("word".to_string()))
+                .await;
 
             assert_eq!(
                 result,
@@ -185,8 +199,8 @@ mod tests {
             );
         }
 
-        #[test]
-        fn test_register_user_name_check_ng_word_service_error() {
+        #[tokio::test]
+        async fn test_register_user_name_check_ng_word_service_error() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository
@@ -205,7 +219,9 @@ mod tests {
 
             let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
 
-            let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
+            let result = service
+                .register_user_name(UnvalidatedUserName("word".to_string()))
+                .await;
 
             assert_eq!(
                 result,
@@ -214,8 +230,8 @@ mod tests {
                 )))
             );
         }
-        #[test]
-        fn test_register_user_name_check_ng_word_validation_error() {
+        #[tokio::test]
+        async fn test_register_user_name_check_ng_word_validation_error() {
             let mut register_user_name_repository = MockRegisterUserNameRepository::new();
 
             register_user_name_repository
@@ -234,7 +250,9 @@ mod tests {
 
             let service = DomainServiceImpl::new(Arc::new(register_user_name_repository));
 
-            let result = service.register_user_name(UnvalidatedUserName("word".to_string()));
+            let result = service
+                .register_user_name(UnvalidatedUserName("word".to_string()))
+                .await;
 
             assert_eq!(
                 result,

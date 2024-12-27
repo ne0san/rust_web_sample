@@ -1,0 +1,3 @@
+mod register_user_name_repository_impl;
+
+pub use register_user_name_repository_impl::RegisterUserNameRepositoryImpl;

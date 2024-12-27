@@ -40,7 +40,7 @@ pub async fn post_user(
 ) -> impl Responder {
     let user_name_dto = UnvalidatedUserName(user_name.user_name.clone());
     let result = service.register_user_name(user_name_dto);
-    match result {
+    match result.await {
         Ok(_) => HttpResponse::Ok().finish(),
         Err(err) => match err {
             RegisterUserNameError::ValidationError(_) => {
@@ -57,6 +57,7 @@ pub async fn post_user(
 mod tests {
     use super::*;
     use actix_web::{http, test, App};
+    use async_trait::async_trait;
     use domain_model::register_user_name::err::{
         RegisterUserNameError, ServiceError, ValidationError,
     };
@@ -65,8 +66,9 @@ mod tests {
 
     mock! {
         pub RegisterUserNameAppService {}
+        #[async_trait]
         impl RegisterUserNameAppService for RegisterUserNameAppService {
-            fn register_user_name(
+            async fn register_user_name(
                 &self,
                 user_name: UnvalidatedUserName,
             ) -> Result<(), RegisterUserNameError>;

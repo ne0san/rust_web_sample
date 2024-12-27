@@ -9,6 +9,8 @@ domain-model = { path = "../domain-model" }
 tracing = ">=0.1.40"
 tracing-subscriber = ">=0.3.18"
 serde = "1.0.216"
+tokio = { version = "1.42.0", features = ["full"]}
+async-trait = "0.1.83"
 
 [dev-dependencies]
 mockall = "0.13.1"

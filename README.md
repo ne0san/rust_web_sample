@@ -20,15 +20,34 @@ cargo install sea-orm-cli
 
 ### migrate init を実行
 
+これでマイグレーションクレートができる
+※このプロジェクトでは作成済みのため不要
+
 ```bash
 sea-orm-cli migrate init
 ```
 
-# アーキテクチャについて
+## migration について
+
+マイグレーションを適用する前に`.env`に合わせて DB を作成しておくこと
+
+### 新規作成
+
+```bash
+sea-orm-cli migrate generate {マイグレーション名}
+```
+
+### マイグレーション適用
+
+```bash
+sea-orm-cli migrate up
+```
+
+## アーキテクチャについて
 
 オニオンアーキテクチャ
 
-## インタフェース層
+### インタフェース層
 
 `crates/interface`
 
@@ -36,7 +55,7 @@ sea-orm-cli migrate init
 
 アプリケーション層以下に依存
 
-## インフラ層
+### インフラ層
 
 `crates/infra`
 
@@ -48,7 +67,7 @@ sea-orm-cli migrate init
 
 リポジトリの実装はここに
 
-## アプリケーションサービス層
+### アプリケーションサービス層
 
 `crates/app-service`
 
@@ -57,7 +76,7 @@ sea-orm-cli migrate init
 
 データ変換とかはここでやる(入力をドメインモデルに変換など)
 
-## ドメインサービス層
+### ドメインサービス層
 
 `crates/domain-service`
 
@@ -66,7 +85,7 @@ sea-orm-cli migrate init
 
 複数のドメインモデルにまたがるビジネスロジックや、ドメインモデルに依存しないビジネスロジックを書く。
 
-## ドメインモデル層
+### ドメインモデル層
 
 `crates/domain-model`
 
@@ -74,9 +93,9 @@ sea-orm-cli migrate init
 
 ドメインモデル毎に、自身の定義と、自身の振る舞いの定義を書く
 
-# テストコードについて
+## テストコードについて
 
-## 不要なテストコード
+### 不要なテストコード
 
 ドメインサービスとアプリケーションサービスの層にある各 new 関数のテストは記載不要
 ※失敗するケースがなく、引数のモックの用意の手間が大きいため

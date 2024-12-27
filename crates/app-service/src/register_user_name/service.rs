@@ -1,10 +1,12 @@
+use async_trait::async_trait;
 use domain_model::register_user_name::{err::RegisterUserNameError, model::UnvalidatedUserName};
 use domain_service::register_user_name::DomainService as RegisterUserNameDomainService;
 use std::sync::Arc;
 use tracing::{error, info};
 
-pub trait AppService {
-    fn register_user_name(
+#[async_trait]
+pub trait AppService: Send + Sync {
+    async fn register_user_name(
         &self,
         user_name: UnvalidatedUserName,
     ) -> Result<(), RegisterUserNameError>;
@@ -20,20 +22,24 @@ impl AppServiceImpl {
         }
     }
 }
+#[async_trait]
 impl AppService for AppServiceImpl {
-    fn register_user_name(
+    async fn register_user_name(
         &self,
         user_name: UnvalidatedUserName,
     ) -> Result<(), RegisterUserNameError> {
-        let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
         let result = self
             .register_user_name_domain_service
-            .register_user_name(unvalidated_user_name);
+            .register_user_name(user_name.clone())
+            .await;
 
         if let Err(err) = &result {
-            error!("Failed to register user name: {:?}", err);
+            error!(
+                "Failed to register user name: {:?} name: {:?}",
+                err, &user_name.0
+            );
         } else {
-            info!("Successfully registered user name: {:?}", user_name.0);
+            info!("Successfully registered user name: {:?}", &user_name.0);
         }
         result
     }
@@ -50,16 +56,17 @@ mod tests {
 
         mock! {
             pub DomainService {}
+            #[async_trait]
             impl RegisterUserNameDomainService for DomainService {
-                fn register_user_name(
+                async fn register_user_name(
                     &self,
                     user_name: UnvalidatedUserName,
                 ) -> Result<(), RegisterUserNameError>;
             }
         }
 
-        #[test]
-        fn test_register_user_name() {
+        #[tokio::test]
+        async fn test_register_user_name() {
             let user_name = UnvalidatedUserName("user_name".to_string());
             let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
             let mut domain_service = MockDomainService::new();
@@ -69,12 +76,12 @@ mod tests {
                 .times(1)
                 .returning(|_| Ok(()));
             let app_service = AppServiceImpl::new(Arc::new(domain_service));
-            let result = app_service.register_user_name(user_name);
+            let result = app_service.register_user_name(user_name).await;
             assert!(result.is_ok());
         }
 
-        #[test]
-        fn test_register_user_name_validation_error() {
+        #[tokio::test]
+        async fn test_register_user_name_validation_error() {
             let user_name = UnvalidatedUserName("word".to_string());
             let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
             let mut domain_service = MockDomainService::new();
@@ -88,7 +95,7 @@ mod tests {
                     )))
                 });
             let app_service = AppServiceImpl::new(Arc::new(domain_service));
-            let result = app_service.register_user_name(user_name);
+            let result = app_service.register_user_name(user_name).await;
             assert!(result.is_err());
             assert_eq!(
                 result.unwrap_err(),
@@ -97,8 +104,8 @@ mod tests {
                 ))
             );
         }
-        #[test]
-        fn test_register_user_name_service_error() {
+        #[tokio::test]
+        async fn test_register_user_name_service_error() {
             let user_name = UnvalidatedUserName("word".to_string());
             let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
             let mut domain_service = MockDomainService::new();
@@ -112,7 +119,7 @@ mod tests {
                     )))
                 });
             let app_service = AppServiceImpl::new(Arc::new(domain_service));
-            let result = app_service.register_user_name(user_name);
+            let result = app_service.register_user_name(user_name).await;
             assert!(result.is_err());
             assert_eq!(
                 result.unwrap_err(),
