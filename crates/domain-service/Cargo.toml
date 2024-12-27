@@ -7,6 +7,5 @@ edition = "2021"
 # domain-model以外の層に依存してはいけない
 domain-model = { path = "../domain-model" }
 
-
 [dev-dependencies]
 mockall = "0.13.1"

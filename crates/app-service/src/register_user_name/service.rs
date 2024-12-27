@@ -3,31 +3,11 @@ use domain_service::register_user_name::DomainService as RegisterUserNameDomainS
 use std::sync::Arc;
 use tracing::{error, info};
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct UserNameDto(String);
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct RegisterUserNameErrorDto {
-    error_code: u16,
-    error_message: String,
-}
-impl From<RegisterUserNameError> for RegisterUserNameErrorDto {
-    fn from(err: RegisterUserNameError) -> Self {
-        match err {
-            RegisterUserNameError::ValidationError(err) => RegisterUserNameErrorDto {
-                error_code: 400,
-                error_message: err.0,
-            },
-            RegisterUserNameError::ServiceError(_) => RegisterUserNameErrorDto {
-                error_code: 500,
-                error_message: "Internal Server Error".to_string(),
-            },
-        }
-    }
-}
-
 pub trait AppService {
-    fn register_user_name(&self, user_name: UserNameDto) -> Result<(), RegisterUserNameErrorDto>;
+    fn register_user_name(
+        &self,
+        user_name: UnvalidatedUserName,
+    ) -> Result<(), RegisterUserNameError>;
 }
 
 pub struct AppServiceImpl {
@@ -41,7 +21,10 @@ impl AppServiceImpl {
     }
 }
 impl AppService for AppServiceImpl {
-    fn register_user_name(&self, user_name: UserNameDto) -> Result<(), RegisterUserNameErrorDto> {
+    fn register_user_name(
+        &self,
+        user_name: UnvalidatedUserName,
+    ) -> Result<(), RegisterUserNameError> {
         let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
         let result = self
             .register_user_name_domain_service
@@ -52,7 +35,7 @@ impl AppService for AppServiceImpl {
         } else {
             info!("Successfully registered user name: {:?}", user_name.0);
         }
-        result.map_err(|err| RegisterUserNameErrorDto::from(err))
+        result
     }
 }
 
@@ -77,7 +60,7 @@ mod tests {
 
         #[test]
         fn test_register_user_name() {
-            let user_name = UserNameDto("user_name".to_string());
+            let user_name = UnvalidatedUserName("user_name".to_string());
             let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
             let mut domain_service = MockDomainService::new();
             domain_service
@@ -92,7 +75,7 @@ mod tests {
 
         #[test]
         fn test_register_user_name_validation_error() {
-            let user_name = UserNameDto("word".to_string());
+            let user_name = UnvalidatedUserName("word".to_string());
             let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
             let mut domain_service = MockDomainService::new();
             domain_service
@@ -109,15 +92,14 @@ mod tests {
             assert!(result.is_err());
             assert_eq!(
                 result.unwrap_err(),
-                RegisterUserNameErrorDto {
-                    error_code: 400,
-                    error_message: "Name must not contain NG words".to_string(),
-                }
+                RegisterUserNameError::from(ValidationError(
+                    "Name must not contain NG words".to_string()
+                ))
             );
         }
         #[test]
         fn test_register_user_name_service_error() {
-            let user_name = UserNameDto("word".to_string());
+            let user_name = UnvalidatedUserName("word".to_string());
             let unvalidated_user_name = UnvalidatedUserName(user_name.0.clone());
             let mut domain_service = MockDomainService::new();
             domain_service
@@ -134,10 +116,7 @@ mod tests {
             assert!(result.is_err());
             assert_eq!(
                 result.unwrap_err(),
-                RegisterUserNameErrorDto {
-                    error_code: 500,
-                    error_message: "Internal Server Error".to_string(),
-                }
+                RegisterUserNameError::from(ServiceError("ServiceError".to_string()))
             );
         }
     }

@@ -337,6 +337,7 @@ dependencies = [
  "domain-model",
  "domain-service",
  "mockall",
+ "serde",
  "tracing",
  "tracing-subscriber",
 ]
@@ -1629,6 +1630,9 @@ name = "interface"
 version = "0.1.0"
 dependencies = [
  "actix-web",
+ "app-service",
+ "domain-model",
+ "mockall",
  "serde",
 ]
 
