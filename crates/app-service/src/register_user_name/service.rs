@@ -46,6 +46,7 @@ impl AppService for AppServiceImpl {
         let result = self
             .register_user_name_domain_service
             .register_user_name(unvalidated_user_name);
+
         if let Err(err) = &result {
             error!("Failed to register user name: {:?}", err);
         } else {
@@ -61,10 +62,8 @@ mod tests {
 
     mod app_service_impl {
         use super::*;
-        use domain_model::register_user_name::err::ServiceError;
-        use domain_model::register_user_name::err::ValidationError;
-        use mockall::mock;
-        use mockall::predicate::*;
+        use domain_model::register_user_name::err::{ServiceError, ValidationError};
+        use mockall::{mock, predicate::*};
 
         mock! {
             pub DomainService {}
