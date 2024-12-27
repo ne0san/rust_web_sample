@@ -35,7 +35,7 @@ impl From<RegisterUserNameError> for RegisterUserNameErrorDto {
 }
 
 #[post("/user")]
-pub async fn register_user(
+pub async fn post_user(
     user_name: web::Json<UserNameDto>,
     service: Data<Arc<dyn RegisterUserNameAppService>>,
 ) -> impl Responder {
@@ -92,7 +92,7 @@ mod tests {
         let mut app = test::init_service(
             App::new()
                 .app_data(web::Data::new(arc_service))
-                .service(register_user),
+                .service(post_user),
         )
         .await;
 
@@ -128,7 +128,7 @@ mod tests {
         let mut app = test::init_service(
             App::new()
                 .app_data(web::Data::new(arc_service))
-                .service(register_user),
+                .service(post_user),
         )
         .await;
 
@@ -169,7 +169,7 @@ mod tests {
         let mut app = test::init_service(
             App::new()
                 .app_data(web::Data::new(arc_service))
-                .service(register_user),
+                .service(post_user),
         )
         .await;
 
