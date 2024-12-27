@@ -18,7 +18,6 @@ pub struct RegisterUserNameErrorDto {
     pub error_code: u16,
     pub error_message: String,
 }
-
 impl From<RegisterUserNameError> for RegisterUserNameErrorDto {
     fn from(err: RegisterUserNameError) -> Self {
         match err {
