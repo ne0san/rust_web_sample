@@ -2,6 +2,7 @@
 name = "rust_web_sample"
 version = "0.1.0"
 edition = "2021"
+default-run = "rust_web_sample"
 
 [dependencies]
 actix-web = "4.9.0"
@@ -16,7 +17,9 @@ tracing-subscriber = ">=0.3.18"
 tokio = "1.42.0"
 dotenv = ">=0.15.0"
 interface = { path = "crates/interface" }
-anyhow = "1.0.94"
+app-service = { path = "crates/app-service" }
+domain-service = { path = "crates/domain-service" }
+infra = { path = "crates/infra" }
 
 [workspace]
 members = [

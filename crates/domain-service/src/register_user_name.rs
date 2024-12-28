@@ -2,4 +2,4 @@ mod repository;
 mod service;
 
 pub use repository::RegisterUserNameRepository;
-pub use service::DomainService;
+pub use service::{DomainService, DomainServiceImpl};

@@ -1,5 +1,5 @@
 pub mod register_user_name;
-use actix_web::{self, get, post, web, HttpResponse, Responder};
+use actix_web::{self, get, post, HttpResponse, Responder};
 
 #[get("/")]
 pub async fn hello() -> impl Responder {

@@ -12,26 +12,23 @@ impl MigrationTrait for Migration {
                     .table(m_user_name::Entity)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(m_user_name::Column::Id)
-                            .integer()
-                            .not_null()
-                            .auto_increment()
-                            .primary_key(),
-                    )
-                    .col(
                         ColumnDef::new(m_user_name::Column::Name)
                             .string()
-                            .not_null(),
+                            .not_null()
+                            .primary_key(),
                     )
                     .col(
                         ColumnDef::new(m_user_name::Column::CreatedAt)
                             .timestamp_with_time_zone()
-                            .not_null(),
+                            .not_null()
+                            .default(Expr::current_timestamp()),
                     )
                     .col(
                         ColumnDef::new(m_user_name::Column::UpdatedAt)
                             .timestamp_with_time_zone()
-                            .not_null(),
+                            .not_null()
+                            .default(Expr::current_timestamp())
+                            .extra("ON UPDATE CURRENT_TIMESTAMP".to_owned()),
                     )
                     .to_owned(),
             )
@@ -42,27 +39,24 @@ impl MigrationTrait for Migration {
                     .table(m_ng_word::Entity)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(m_ng_word::Column::Id)
-                            .integer()
+                        ColumnDef::new(m_ng_word::Column::Word)
+                            .string()
                             .not_null()
-                            .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(m_ng_word::Column::Word).string().not_null())
-                    .col(
-                        ColumnDef::new(m_ng_word::Column::CreatedUserId)
-                            .integer()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(m_ng_word::Column::CreatedUserName).string())
                     .col(
                         ColumnDef::new(m_ng_word::Column::CreatedAt)
                             .timestamp_with_time_zone()
-                            .not_null(),
+                            .not_null()
+                            .default(Expr::current_timestamp()),
                     )
                     .col(
                         ColumnDef::new(m_ng_word::Column::UpdatedAt)
                             .timestamp_with_time_zone()
-                            .not_null(),
+                            .not_null()
+                            .default(Expr::current_timestamp())
+                            .extra("ON UPDATE CURRENT_TIMESTAMP".to_owned()),
                     )
                     .to_owned(),
             )

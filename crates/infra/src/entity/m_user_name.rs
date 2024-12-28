@@ -4,7 +4,6 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "m_user_name")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub id: i32,
     pub name: String,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
@@ -17,8 +16,8 @@ impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
             Self::MNgWord => Entity::belongs_to(super::m_ng_word::Entity)
-                .from(Column::Id)
-                .to(super::m_ng_word::Column::CreatedUserId)
+                .from(Column::Name)
+                .to(super::m_ng_word::Column::CreatedUserName)
                 .into(),
         }
     }
