@@ -5,15 +5,16 @@ use domain_model::register_user_name::{
     model::UserName,
 };
 use domain_service::register_user_name::RegisterUserNameRepository;
-use sea_orm::{entity::prelude::*, DatabaseConnection, DbBackend, Set, Statement};
-use std::sync::Arc;
-use tracing::error;
+use sea_orm::{
+    entity::prelude::*, ActiveValue::NotSet, DatabaseConnection, DbBackend, Set, Statement,
+};
+use tracing::{error, info};
 
 pub struct RegisterUserNameRepositoryImpl {
-    db_conn: Arc<DatabaseConnection>,
+    db_conn: DatabaseConnection,
 }
 impl RegisterUserNameRepositoryImpl {
-    pub fn new(db_conn: Arc<DatabaseConnection>) -> Self {
+    pub fn new(db_conn: DatabaseConnection) -> Self {
         RegisterUserNameRepositoryImpl { db_conn }
     }
 }
@@ -52,11 +53,14 @@ impl RegisterUserNameRepository for RegisterUserNameRepositoryImpl {
     }
     async fn create_user_name(&self, user_name: &UserName) -> Result<(), ServiceError> {
         let user_name = m_user_name::ActiveModel {
+            id: NotSet,
             name: Set(user_name.value().to_string()),
-            ..Default::default()
+            created_at: NotSet,
+            updated_at: NotSet,
         };
 
-        let result = user_name.insert(self.db_conn.as_ref()).await;
+        let result = user_name.insert(&self.db_conn).await;
+        info!("Insert result: {:?}", result);
 
         match result {
             Ok(_) => Ok(()),

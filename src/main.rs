@@ -32,7 +32,7 @@ async fn main() -> std::io::Result<()> {
 
     let register_user_name_app_service: Arc<dyn RegisterUserNameAppService> = Arc::new(
         RegisterUserNameAppServiceImpl::new(Arc::new(RegisterUserNameDomainService::new(
-            Arc::new(RegisterUserNameRepositoryImpl::new(Arc::new(db_conn))),
+            Arc::new(RegisterUserNameRepositoryImpl::new(db_conn)),
         ))),
     );
 

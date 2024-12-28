@@ -12,10 +12,17 @@ impl MigrationTrait for Migration {
                     .table(m_user_name::Entity)
                     .if_not_exists()
                     .col(
+                        ColumnDef::new(m_user_name::Column::Id)
+                            .integer()
+                            .not_null()
+                            .auto_increment()
+                            .primary_key(),
+                    )
+                    .col(
                         ColumnDef::new(m_user_name::Column::Name)
                             .string()
                             .not_null()
-                            .primary_key(),
+                            .unique_key(),
                     )
                     .col(
                         ColumnDef::new(m_user_name::Column::CreatedAt)
@@ -33,18 +40,26 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
+
         manager
             .create_table(
                 sea_query::Table::create()
                     .table(m_ng_word::Entity)
                     .if_not_exists()
                     .col(
+                        ColumnDef::new(m_ng_word::Column::Id)
+                            .integer()
+                            .not_null()
+                            .auto_increment()
+                            .primary_key(),
+                    )
+                    .col(
                         ColumnDef::new(m_ng_word::Column::Word)
                             .string()
                             .not_null()
-                            .primary_key(),
+                            .unique_key(),
                     )
-                    .col(ColumnDef::new(m_ng_word::Column::CreatedUserName).string())
+                    .col(ColumnDef::new(m_ng_word::Column::CreatedUserId).string())
                     .col(
                         ColumnDef::new(m_ng_word::Column::CreatedAt)
                             .timestamp_with_time_zone()
