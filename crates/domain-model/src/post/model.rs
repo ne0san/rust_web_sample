@@ -138,6 +138,7 @@ impl NgWord {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct Post {
     pub user_name: UserName,
     pub content: String,
