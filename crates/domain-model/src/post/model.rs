@@ -139,7 +139,67 @@ impl NgWord {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Post {
-    pub user_name: UserName,
+pub struct UnvalidatedPost {
+    pub user_name: UnvalidatedUserName,
     pub content: String,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Post {
+    user_name: UserName,
+    content: String,
+}
+impl Post {
+    /// 投稿の値オブジェクトを生成
+    ///
+    /// ユーザ名が3文字未満もしくは16文字を超える場合はエラーを返す
+    /// コンテンツが空文字の場合はエラーを返す
+    ///
+    /// # Examples
+    /// ```rust
+    /// use domain_model::post::model::Post;
+    ///
+    /// let user_name = "name".to_string();
+    /// let content = "content".to_string();
+    ///
+    /// let post = Post::new(user_name, content);
+    /// assert!(post.is_ok());
+    /// ```
+    ///
+    /// # Failures
+    /// ```rust
+    /// use domain_model::post::model::Post;
+    ///
+    /// // ユーザ名が3文字未満の場合
+    /// let user_name = "na".to_string();
+    /// let content = "content".to_string();
+    /// let post = Post::new(user_name, content);
+    /// assert!(post.is_err());
+    ///
+    /// // ユーザ名が16文字を超える場合
+    /// let user_name = "thisisaverylongname".to_string();
+    /// let content = "content".to_string();
+    /// let post = Post::new(user_name, content);
+    /// assert!(post.is_err());
+    ///
+    /// // コンテンツが空文字の場合
+    /// let user_name = "name".to_string();
+    /// let content = "".to_string();
+    /// let post = Post::new(user_name, content);
+    /// assert!(post.is_err());
+    /// ```
+    pub fn new(user_name: String, content: String) -> Result<Self, ValidationError> {
+        let user_name = UserName::new(&user_name)?;
+        if content.len() == 0 {
+            Err(ValidationError("Content must not be empty".to_string()))
+        } else {
+            Ok(Self { user_name, content })
+        }
+    }
+    pub fn user_name(&self) -> &UserName {
+        &self.user_name
+    }
+    pub fn content(&self) -> &str {
+        &self.content
+    }
 }
