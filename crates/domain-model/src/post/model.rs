@@ -104,19 +104,19 @@ impl NgWord {
     /// let result = NgWord::new("thisisaverylo");
     /// assert!(result.is_err());
     /// ```
-    pub fn new(name: &str) -> Result<Self, ValidationError> {
-        if name.len() < MIN_NG_WORD_LENGTH {
+    pub fn new(ng_word: &str) -> Result<Self, ValidationError> {
+        if ng_word.len() < MIN_NG_WORD_LENGTH {
             Err(ValidationError(format!(
                 "NgWord must be at least {} characters long",
                 MIN_NG_WORD_LENGTH
             )))
-        } else if name.len() > MAX_NG_WORD_LENGTH {
+        } else if ng_word.len() > MAX_NG_WORD_LENGTH {
             Err(ValidationError(format!(
                 "NgWord must be at most {} characters long",
                 MAX_NG_WORD_LENGTH
             )))
         } else {
-            Ok(NgWord(name.to_string()))
+            Ok(NgWord(ng_word.to_string()))
         }
     }
 

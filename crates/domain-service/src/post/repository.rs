@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use domain_model::post::{
-    err::ServiceError,
+    err::{PostError, ServiceError},
     model::{NgWord, Post, UnvalidatedPost, UserName},
 };
 

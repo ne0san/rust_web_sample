@@ -1,16 +1,16 @@
-use domain_model::post::model::NgWord;
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "m_ng_word")]
+#[sea_orm(table_name = "t_post")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub word: String,
-    pub created_user_id: Option<i32>,
+    pub posted_user_id: i32,
+    pub content: String,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
+
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
     MUserName,
@@ -19,15 +19,10 @@ impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
             Self::MUserName => Entity::belongs_to(super::m_user_name::Entity)
-                .from(Column::CreatedUserId)
+                .from(Column::PostedUserId)
                 .to(super::m_user_name::Column::Id)
                 .into(),
         }
     }
 }
 impl ActiveModelBehavior for ActiveModel {}
-impl Into<NgWord> for Model {
-    fn into(self) -> NgWord {
-        NgWord::new(&self.word).unwrap()
-    }
-}

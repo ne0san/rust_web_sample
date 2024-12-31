@@ -61,8 +61,7 @@ mod tests {
     use domain_model::register_user_name::err::{
         RegisterUserNameError, ServiceError, ValidationError,
     };
-    use mockall::predicate::*;
-    use mockall::*;
+    use mockall::{predicate::*, *};
 
     mock! {
         pub RegisterUserNameAppService {}
