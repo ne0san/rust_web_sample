@@ -1,17 +1,20 @@
 use actix_web::{self, web::Data, App, HttpServer};
 use app_service::{
+    login::{AppService as LoginAppService, AppServiceImpl as LoginAppServiceImpl},
     post::{AppService as PostAppService, AppServiceImpl as PostAppServiceImpl},
     register_user_name::{
         AppService as RegisterUserNameAppService, AppServiceImpl as RegisterUserNameAppServiceImpl,
     },
 };
 use domain_service::{
-    post::DomainServiceImpl as PostDomainService,
+    login::DomainServiceImpl as LoginDomainService, post::DomainServiceImpl as PostDomainService,
     register_user_name::DomainServiceImpl as RegisterUserNameDomainService,
 };
 use dotenv::dotenv;
-use infra::repository_impl::{PostRepositoryImpl, RegisterUserNameRepositoryImpl};
-use interface::{post::post_post, register_user_name::post_user};
+use infra::repository_impl::{
+    LoginRepositoryImpl, PostRepositoryImpl, RegisterUserNameRepositoryImpl,
+};
+use interface::{login::post_login, post::post_post, register_user_name::post_user};
 use sea_orm::*;
 use std::{env, sync::Arc};
 use tracing::*;
@@ -42,7 +45,10 @@ async fn main() -> std::io::Result<()> {
         ))),
     );
     let post_app_service: Arc<dyn PostAppService> = Arc::new(PostAppServiceImpl::new(Arc::new(
-        PostDomainService::new(Arc::new(PostRepositoryImpl::new(db_conn))),
+        PostDomainService::new(Arc::new(PostRepositoryImpl::new(db_conn.clone()))),
+    )));
+    let login_app_service: Arc<dyn LoginAppService> = Arc::new(LoginAppServiceImpl::new(Arc::new(
+        LoginDomainService::new(Arc::new(LoginRepositoryImpl::new(db_conn))),
     )));
 
     println!("Playground: http://localhost:8000");
@@ -53,6 +59,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(register_user_name_app_service.clone()))
             .service(post_post)
             .app_data(Data::new(post_app_service.clone()))
+            .service(post_login)
+            .app_data(Data::new(login_app_service.clone()))
     };
     // ローカルサーバー
     HttpServer::new(factory)
