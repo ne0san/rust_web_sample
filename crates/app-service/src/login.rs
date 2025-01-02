@@ -1,2 +1,2 @@
 mod service;
-// pub use service::{AppService, AppServiceImpl};
+pub use service::{AppService, AppServiceImpl};
