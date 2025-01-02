@@ -19,7 +19,7 @@ pub struct DomainServiceImpl {
 }
 impl DomainServiceImpl {
     pub fn new(register_user_name_repository: Arc<dyn RegisterUserNameRepository>) -> Self {
-        DomainServiceImpl {
+        Self {
             register_user_name_repository,
         }
     }

@@ -6,8 +6,7 @@ use domain_model::post::{
 };
 use domain_service::post::PostRepository;
 use sea_orm::{
-    entity::prelude::*, ActiveValue::NotSet, DatabaseConnection, DbBackend, EntityOrSelect,
-    QuerySelect, Set,
+    entity::prelude::*, ActiveValue::NotSet, DatabaseConnection, EntityOrSelect, QuerySelect, Set,
 };
 use tracing::error;
 pub struct PostRepositoryImpl {

@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use domain_model::post::{
-    err::{PostError, ServiceError},
-    model::{NgWord, Post, UnvalidatedPost, UserName},
+    err::ServiceError,
+    model::{NgWord, Post, UserName},
 };
 
 #[cfg(test)]

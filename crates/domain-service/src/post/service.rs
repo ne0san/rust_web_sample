@@ -55,10 +55,7 @@ mod tests {
     use mockall::predicate::*;
 
     mod domain_service_impl {
-        use domain_model::post::{
-            self,
-            model::{Post, UnvalidatedUserName},
-        };
+        use domain_model::post::{self, model::UnvalidatedUserName};
 
         use crate::post::repository::MockPostRepository;
 
@@ -181,7 +178,6 @@ mod tests {
                 user_name: uv_user_name.clone(),
                 content: "content".to_string(),
             };
-            let post = post::model::Post::new(uv_user_name.0, "content".to_string()).unwrap();
             let mut post_repository = MockPostRepository::new();
             post_repository
                 .expect_user_exists()
@@ -206,7 +202,6 @@ mod tests {
                 user_name: uv_user_name.clone(),
                 content: "content".to_string(),
             };
-            let post = post::model::Post::new(uv_user_name.0, "content".to_string()).unwrap();
             let mut post_repository = MockPostRepository::new();
             post_repository
                 .expect_user_exists()

@@ -17,7 +17,7 @@ pub struct AppServiceImpl {
 }
 impl AppServiceImpl {
     pub fn new(register_user_name_domain_service: Arc<dyn RegisterUserNameDomainService>) -> Self {
-        AppServiceImpl {
+        Self {
             register_user_name_domain_service,
         }
     }

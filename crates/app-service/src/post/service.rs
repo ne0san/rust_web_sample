@@ -1,8 +1,5 @@
 use async_trait::async_trait;
-use domain_model::post::{
-    err::PostError,
-    model::{UnvalidatedPost, UnvalidatedUserName},
-};
+use domain_model::post::{err::PostError, model::UnvalidatedPost};
 use domain_service::post::DomainService as PostDomainService;
 use std::sync::Arc;
 use tracing::{error, info};
@@ -44,7 +41,7 @@ mod tests {
         use super::*;
         use domain_model::post::{
             err::{ServiceError, ValidationError},
-            model::UnvalidatedPost,
+            model::{UnvalidatedPost, UnvalidatedUserName},
         };
         use mockall::{mock, predicate::*};
 
