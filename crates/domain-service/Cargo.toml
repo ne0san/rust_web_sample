@@ -8,6 +8,7 @@ async-trait = "0.1.83"
 tokio = { version = "1.42.0", features = ["full"]}
 # domain-model以外の層に依存してはいけない
 domain-model = { path = "../domain-model" }
+chrono = "0.4.39"
 
 [dev-dependencies]
 mockall = "0.13.1"
