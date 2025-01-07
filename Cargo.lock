@@ -329,6 +329,7 @@ name = "app-service"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "chrono",
  "domain-model",
  "domain-service",
  "mockall",
@@ -1620,6 +1621,7 @@ version = "0.1.0"
 dependencies = [
  "app-service",
  "async-trait",
+ "chrono",
  "domain-model",
  "domain-service",
  "mockall",
@@ -1647,6 +1649,7 @@ dependencies = [
  "actix-web",
  "app-service",
  "async-trait",
+ "chrono",
  "domain-model",
  "mockall",
  "serde",

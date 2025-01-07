@@ -1,7 +1,9 @@
+mod get_all_post_repository_impl;
 mod login_repository_impl;
 mod post_repository_impl;
 mod register_user_name_repository_impl;
 
+pub use get_all_post_repository_impl::GetAllPostRepositoryImpl;
 pub use login_repository_impl::LoginRepositoryImpl;
 pub use post_repository_impl::PostRepositoryImpl;
 pub use register_user_name_repository_impl::RegisterUserNameRepositoryImpl;

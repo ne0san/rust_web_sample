@@ -1,5 +1,5 @@
 mod repository;
 mod service;
 
-// pub use repository::LoginRepository;
-// pub use service::{DomainService, DomainServiceImpl};
+pub use repository::GetAllPostRepository;
+pub use service::{DomainService, DomainServiceImpl};
