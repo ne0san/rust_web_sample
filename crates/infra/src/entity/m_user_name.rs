@@ -12,6 +12,7 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
     MNgWord,
+    TPost,
 }
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
@@ -20,7 +21,18 @@ impl RelationTrait for Relation {
                 .from(Column::Id)
                 .to(super::m_ng_word::Column::CreatedUserId)
                 .into(),
+            Self::TPost => Entity::belongs_to(super::t_post::Entity)
+                .from(Column::Id)
+                .to(super::t_post::Column::PostedUserId)
+                .into(),
         }
     }
 }
+
+impl Related<super::t_post::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::TPost.def()
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}

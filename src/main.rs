@@ -1,5 +1,8 @@
 use actix_web::{self, web::Data, App, HttpServer};
 use app_service::{
+    get_all_post::{
+        AppService as GetAllPostAppService, AppServiceImpl as GetAllPostAppServiceImpl,
+    },
     login::{AppService as LoginAppService, AppServiceImpl as LoginAppServiceImpl},
     post::{AppService as PostAppService, AppServiceImpl as PostAppServiceImpl},
     register_user_name::{
@@ -7,14 +10,18 @@ use app_service::{
     },
 };
 use domain_service::{
+    get_all_post::DomainServiceImpl as GetAllPostDomainService,
     login::DomainServiceImpl as LoginDomainService, post::DomainServiceImpl as PostDomainService,
     register_user_name::DomainServiceImpl as RegisterUserNameDomainService,
 };
 use dotenv::dotenv;
 use infra::repository_impl::{
-    LoginRepositoryImpl, PostRepositoryImpl, RegisterUserNameRepositoryImpl,
+    GetAllPostRepositoryImpl, LoginRepositoryImpl, PostRepositoryImpl,
+    RegisterUserNameRepositoryImpl,
 };
-use interface::{login::post_login, post::post_post, register_user_name::post_user};
+use interface::{
+    get_all_post::get_all_post, login::post_login, post::post_post, register_user_name::post_user,
+};
 use sea_orm::*;
 use std::{env, sync::Arc};
 use tracing::*;
@@ -48,8 +55,13 @@ async fn main() -> std::io::Result<()> {
         PostDomainService::new(Arc::new(PostRepositoryImpl::new(db_conn.clone()))),
     )));
     let login_app_service: Arc<dyn LoginAppService> = Arc::new(LoginAppServiceImpl::new(Arc::new(
-        LoginDomainService::new(Arc::new(LoginRepositoryImpl::new(db_conn))),
+        LoginDomainService::new(Arc::new(LoginRepositoryImpl::new(db_conn.clone()))),
     )));
+
+    let get_all_post_service: Arc<dyn GetAllPostAppService> =
+        Arc::new(GetAllPostAppServiceImpl::new(Arc::new(
+            GetAllPostDomainService::new(Arc::new(GetAllPostRepositoryImpl::new(db_conn))),
+        )));
 
     println!("Playground: http://localhost:8000");
 
@@ -61,6 +73,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(post_app_service.clone()))
             .service(post_login)
             .app_data(Data::new(login_app_service.clone()))
+            .service(get_all_post)
+            .app_data(Data::new(get_all_post_service.clone()))
     };
     // ローカルサーバー
     HttpServer::new(factory)

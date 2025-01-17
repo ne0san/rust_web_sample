@@ -25,4 +25,9 @@ impl RelationTrait for Relation {
         }
     }
 }
+impl Related<super::m_user_name::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::MUserName.def()
+    }
+}
 impl ActiveModelBehavior for ActiveModel {}
