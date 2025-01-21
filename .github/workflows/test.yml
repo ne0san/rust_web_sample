@@ -15,4 +15,5 @@ jobs:
 
       - name: Run tests
         uses: actions-rs/cargo@v1
-        run: cargo test --verbose
+        with:
+          command: test
