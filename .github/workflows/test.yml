@@ -13,10 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Rust
-        uses: actions-rs/setup@v1
-        with:
-          rust-version: nightly
-
       - name: Run tests
+        uses: actions-rs/cargo@v1
         run: cargo test --verbose
