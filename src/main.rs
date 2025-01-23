@@ -5,6 +5,9 @@ use app_service::{
     },
     login::{AppService as LoginAppService, AppServiceImpl as LoginAppServiceImpl},
     post::{AppService as PostAppService, AppServiceImpl as PostAppServiceImpl},
+    register_ng_word::{
+        AppService as RegisterNgWordAppService, AppServiceImpl as RegisterNgWordAppServiceImpl,
+    },
     register_user_name::{
         AppService as RegisterUserNameAppService, AppServiceImpl as RegisterUserNameAppServiceImpl,
     },
@@ -12,15 +15,17 @@ use app_service::{
 use domain_service::{
     get_all_post::DomainServiceImpl as GetAllPostDomainService,
     login::DomainServiceImpl as LoginDomainService, post::DomainServiceImpl as PostDomainService,
+    register_ng_word::DomainServiceImpl as RegisterNgWordDomainService,
     register_user_name::DomainServiceImpl as RegisterUserNameDomainService,
 };
 use dotenv::dotenv;
 use infra::repository_impl::{
     GetAllPostRepositoryImpl, LoginRepositoryImpl, PostRepositoryImpl,
-    RegisterUserNameRepositoryImpl,
+    RegisterNgWordRepositoryImpl, RegisterUserNameRepositoryImpl,
 };
 use interface::{
-    get_all_post::get_all_post, login::post_login, post::post_post, register_user_name::post_user,
+    get_all_post::get_all_post, login::post_login, post::post_post,
+    register_ng_word::register_ng_word, register_user_name::post_user,
 };
 use sea_orm::*;
 use std::{env, sync::Arc};
@@ -60,7 +65,12 @@ async fn main() -> std::io::Result<()> {
 
     let get_all_post_service: Arc<dyn GetAllPostAppService> =
         Arc::new(GetAllPostAppServiceImpl::new(Arc::new(
-            GetAllPostDomainService::new(Arc::new(GetAllPostRepositoryImpl::new(db_conn))),
+            GetAllPostDomainService::new(Arc::new(GetAllPostRepositoryImpl::new(db_conn.clone()))),
+        )));
+
+    let register_ng_word_service: Arc<dyn RegisterNgWordAppService> =
+        Arc::new(RegisterNgWordAppServiceImpl::new(Arc::new(
+            RegisterNgWordDomainService::new(Arc::new(RegisterNgWordRepositoryImpl::new(db_conn))),
         )));
 
     println!("Playground: http://localhost:8000");
@@ -75,6 +85,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(login_app_service.clone()))
             .service(get_all_post)
             .app_data(Data::new(get_all_post_service.clone()))
+            .service(register_ng_word)
+            .app_data(Data::new(register_ng_word_service.clone()))
     };
     // ローカルサーバー
     HttpServer::new(factory)
